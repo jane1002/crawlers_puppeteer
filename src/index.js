@@ -49,8 +49,8 @@ async function main() {
     // search conditions, submit
     const fromDate = '06/01/2017';
     const toDate = '06/01/2020';
-    // await page.type('#P1_FILED_DATE_L', fromDate, { delay: 100 });
-    // await page.type('#P1_FILED_DATE_H', toDate, { delay: 100 });
+    await page.type('#P1_FILED_DATE_L', fromDate, { delay: 100 });
+    await page.type('#P1_FILED_DATE_H', toDate, { delay: 100 });
     await page.click('#P1_SEARCH');
 
     await page.waitForNavigation({
