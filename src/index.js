@@ -6,6 +6,7 @@ const json2csv = require('json2csv');
 const os = require('os');
 
 async function main() {
+    const filterSwitch = true;
     const browser = await puppeteer.launch({headless: false});
     log(chalk.green('browser start'));
     // let data = {
@@ -113,7 +114,7 @@ async function main() {
                 // scraping data:
                 log(chalk.blue('start scraping one docket'));
                 const docketDetail = await docketDetailPage.evaluate(() => {
-                    const docketNum = document.querySelector(
+                    let docketNum = document.querySelector(
                         'div.rc-body > div > div.rc-content-main > h1').innerText;
                     const filedBy = document.querySelector('#P56_FILED_BY').innerText;
                     const industry = document.querySelector('#P56_INDUSTRY').innerText;
@@ -136,11 +137,16 @@ async function main() {
                         staff
                     };
                 });
+                docketDetail.docketNum = processDocketNumField(docketDetail.docketNum);
+
                 log(chalk.green('[get data]', JSON.stringify(docketDetail)));
                 // data.dockets.push(docketDetail);
                 dockets.push(docketDetail);
 
-                exportJsonObjToCSV(docketDetail, output);
+                log(outputFilter(docketDetail, 'industry', 'electric'));
+                if(filterSwitch && outputFilter(docketDetail, 'industry', 'electric')) {
+                    exportJsonObjToCSV(docketDetail, output);
+                }
                 log(chalk.blue('end scraping docket: ', docketDetail.docketNum));
                 // only test first row in each page
                 break;
@@ -185,7 +191,6 @@ const exportJsonObjToCSV = (data,  outputFile) => {
         const parser = new json2csv.Parser(opts);
         const csv = parser.parse(data);
 
-        log(outputFile);
         fs.writeFileSync(outputFile, `${csv}${os.EOL}`, {flag: 'a'});
 
     } catch (err) {
@@ -194,12 +199,26 @@ const exportJsonObjToCSV = (data,  outputFile) => {
 };
 
 const processDocketNumField = (docketNumField) => {
-
+    if(docketNumField) {
+        return docketNumField.trim().split('-')[0].trim();
+    }
 };
 
 const replaceAll = (str , replaceKey , replaceVal) => {
     const reg = new RegExp(replaceKey , 'g');
     return str.replace(reg , replaceVal || '');
+};
+
+const outputFilter = (obj, mustHaveFieldKey, mustHaveFieldValue) => {
+    if(typeof obj === 'object') {
+        for(let field of Object.keys(obj)) {
+            if (field === mustHaveFieldKey && obj[field].toLowerCase().trim() === mustHaveFieldValue) {
+                console.log(JSON.stringify(obj.docketNum));
+                return true;
+            }
+        }
+        return false;
+    }
 };
 
 main();
