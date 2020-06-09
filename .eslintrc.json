@@ -1,0 +1,45 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true,
+        "node": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaVersion": 11
+    },
+    "rules": {
+        "interface-name": [
+            true,
+            "never-prefix"
+        ],
+        "max-line-length": [
+            false
+        ],
+        "no-console": [
+            false,
+            "log",
+            "error"
+        ],
+        "no-var-requires": false,
+        "no-trailing-whitespace": false,
+        "eofline": false,
+        "trailing-comma": true,
+        "quotemark": [
+            true,
+            "single"
+        ],
+        "member-access": false,
+        "member-ordering": false,
+        "max-classes-per-file": false,
+        "object-literal-sort-keys": false,
+        "object-literal-shorthand": false,
+        "whitespace": [
+            true,
+            "check-module"
+        ],
+        "semi": "error",
+        "semi-spacing": "error"
+    }
+}
